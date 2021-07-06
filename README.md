@@ -77,3 +77,9 @@ $ catkin_make
         <isRollerModel>true</isRollerModel>
       </plugin>
 ```
+
+------
+
+This repository is for your reference only. copying, patent application, academic journals are strictly prohibited.
+
+Copyright © 2021 ZM Robotics Software Laboratory.
