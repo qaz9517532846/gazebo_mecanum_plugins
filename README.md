@@ -76,6 +76,7 @@ $ catkin_make
         <publishOdom>false</publishOdom>
         <isRollerModel>true</isRollerModel>
       </plugin>
+</gazebo>
 ```
 
 ------
