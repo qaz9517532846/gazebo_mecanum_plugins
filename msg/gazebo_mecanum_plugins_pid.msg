@@ -1,0 +1,12 @@
+float64 LR_P
+float64 LR_I
+float64 LR_D
+float64 LF_P
+float64 LF_I
+float64 LF_D
+float64 RF_P
+float64 RF_I
+float64 RF_D
+float64 RR_P
+float64 RR_I
+float64 RR_D

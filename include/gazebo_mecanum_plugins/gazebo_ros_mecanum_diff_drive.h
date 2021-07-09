@@ -21,6 +21,9 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include <sensor_msgs/JointState.h>
+#include <gazebo_mecanum_plugins/gazebo_ros_mecanum_pid.h>
+#include <gazebo_mecanum_plugins/gazebo_mecanum_plugins_vel.h>
+#include <gazebo_mecanum_plugins/gazebo_mecanum_plugins_pid.h>
 
 namespace gazebo
 {
@@ -111,6 +114,24 @@ namespace gazebo
         bool publishWheelJointState_;
         bool publishOdomentry_;
         bool isRollerModel_;
+
+        //gazebo plugin mecanum mobile robot with PID Controller.
+        pid_controllerPtr pid_controller_;
+        double dt_;
+
+        std::string Wheel_I_vel;
+        std::string Wheel_O_vel;
+        std::string wheel_pid;
+
+        ros::Publisher Wheel_I_vel_pub_;
+        ros::Publisher Wheel_O_vel_pub_;
+
+        gazebo_mecanum_plugins::gazebo_mecanum_plugins_vel wheel_input_;
+        gazebo_mecanum_plugins::gazebo_mecanum_plugins_vel wheel_output_;
+
+        ros::Subscriber wheel_pid_sub_;
+        void wheelPIDCallback(const gazebo_mecanum_plugins::gazebo_mecanum_plugins_pid::ConstPtr& msg);
+        bool AjustPID_;
   };
 }
 
