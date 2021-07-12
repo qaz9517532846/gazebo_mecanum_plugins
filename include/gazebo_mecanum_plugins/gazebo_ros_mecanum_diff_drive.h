@@ -131,7 +131,6 @@ namespace gazebo
 
         ros::Subscriber wheel_pid_sub_;
         void wheelPIDCallback(const gazebo_mecanum_plugins::gazebo_mecanum_plugins_pid::ConstPtr& msg);
-        bool AjustPID_;
   };
 }
 

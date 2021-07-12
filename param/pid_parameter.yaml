@@ -1,0 +1,14 @@
+  LRWheel_P: 10.0
+  LRWheel_I: 0.0
+  LRWheel_D: 0.0
+  LFWheel_P: 10.0
+  LFWheel_I: 0.0
+  LFWheel_D: 0.0
+  RFWheel_P: 10.0
+  RFWheel_I: 0.0
+  RFWheel_D: 0.0
+  RRWheel_P: 10.0
+  RRWheel_I: 0.0
+  RRWheel_D: 0.0
+
+  isAjustPID: true

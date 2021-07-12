@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="gazebo_mecanum_plugins" type="gazebo_mecanum_plugin_pid" respawn="false" name="gazebo_mecanum_plugin_pid" output="screen">
+    <rosparam file="$(find gazebo_mecanum_plugins)/param/pid_parameter.yaml" command="load" />
+  </node>
+</launch>

@@ -8,6 +8,8 @@ double wheel2_p, wheel2_i, wheel2_d;
 double wheel3_p, wheel3_i, wheel3_d;
 double wheel4_p, wheel4_i, wheel4_d;
 
+bool isAjustPID_;
+
 void pid_callback(gazebo_mecanum_plugins::gazebo_mecanum_plugins_pidConfig &config, uint32_t level) 
 {
     wheel1_p = config.LEFT_REAR_P;
@@ -29,13 +31,36 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "gazebo_mecanum_plugin_pid");
   ros::NodeHandle n;
 
+  ros::NodeHandle prinate_nh("~");
+  prinate_nh.param<double>("LRWheel_P", wheel1_p, 10.0);
+  prinate_nh.param<double>("LRWheel_I", wheel1_i, 0.0);
+  prinate_nh.param<double>("LRWheel_D", wheel1_d, 0.0);
+
+  prinate_nh.param<double>("LFWheel_P", wheel2_p, 10.0);
+  prinate_nh.param<double>("LFWheel_I", wheel2_i, 0.0);
+  prinate_nh.param<double>("LFWheel_D", wheel2_d, 0.0);
+
+  prinate_nh.param<double>("RFWheel_P", wheel3_p, 10.0);
+  prinate_nh.param<double>("RFWheel_I", wheel3_i, 0.0);
+  prinate_nh.param<double>("RFWheel_D", wheel3_d, 0.0);
+
+  prinate_nh.param<double>("RRWheel_P", wheel4_p, 10.0);
+  prinate_nh.param<double>("RRWheel_I", wheel4_i, 0.0);
+  prinate_nh.param<double>("RRWheel_D", wheel4_d, 0.0);
+  prinate_nh.param<bool>("isAjustPID", isAjustPID_, false);
+
+  ROS_INFO("Set to ajust PID Parameter = %d", isAjustPID_);
+
   dynamic_reconfigure::Server<gazebo_mecanum_plugins::gazebo_mecanum_plugins_pidConfig> pid_server;
   dynamic_reconfigure::Server<gazebo_mecanum_plugins::gazebo_mecanum_plugins_pidConfig>::CallbackType f;
   
   ros::Publisher gazebo_ros_mecanum_pid = n.advertise<gazebo_mecanum_plugins::gazebo_mecanum_plugins_pid>("gazebo_mecanum_plugins_PID", 50);
-
   f = boost::bind(pid_callback, _1, _2);
-  pid_server.setCallback(f);
+
+  if(isAjustPID_)
+  {
+    pid_server.setCallback(f);
+  }
 
   ros::Rate loop_rate(20);
 

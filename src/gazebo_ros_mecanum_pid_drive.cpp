@@ -26,19 +26,6 @@ namespace gazebo
         parent_ = parent;
         pid_controller_ = pid_controllerPtr(new pid_controller(parent_));
         /* Parse parameters */
-
-        pid_controller_->LEFT_REAR_.P = 10.0;
-        pid_controller_->LEFT_REAR_.I = 0.0;
-        pid_controller_->LEFT_REAR_.D = 0.0;
-        pid_controller_->LEFT_FRONT_.P = 10.0;
-        pid_controller_->LEFT_FRONT_.I = 0.0;
-        pid_controller_->LEFT_FRONT_.D = 0.0;
-        pid_controller_->RIGHT_FRONT_.P = 10.0;
-        pid_controller_->RIGHT_FRONT_.I = 0.0;
-        pid_controller_->RIGHT_FRONT_.D = 0.0;
-        pid_controller_->RIGHT_REAR_.P = 10.0;
-        pid_controller_->RIGHT_REAR_.I = 0.0;
-        pid_controller_->RIGHT_REAR_.D = 0.0;
         
         robot_namespace_ = "";
         if(!sdf->HasElement("robotNamespace"))
@@ -302,19 +289,7 @@ namespace gazebo
         {
             wheel_pid = sdf->GetElement("WheelPID")->Get<std::string>();
         }
-
-        AjustPID_ = false;
-        if(!sdf->HasElement("AjustPID"))
-        {
-            ROS_WARN_NAMED("MecanumDiffDrive", "MecanumDiffDrivePlugin (ns = %s) missing <AjustPID>, "
-                           "defaults to %d",
-                            robot_namespace_.c_str(), AjustPID_);
-        }
-        else
-        {
-            AjustPID_ = sdf->GetElement("AjustPID")->Get<bool>();
-        }
-
+        
         joints_.resize(4);
         joints_[LEFT_REAR] = parent_->GetJoint(left_rear_);
         joints_[LEFT_FRONT] = parent_->GetJoint(left_front_);
@@ -373,11 +348,7 @@ namespace gazebo
                                                                                                                          ros::VoidPtr(), &queue_);
 
         vel_sub_ = rosnode_->subscribe(so);
-
-        if(AjustPID_)
-        {
-            wheel_pid_sub_ = rosnode_->subscribe(so_pid);
-        }
+        wheel_pid_sub_ = rosnode_->subscribe(so_pid);
 
         odometry_pub_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 1);
         Wheel_I_vel_pub_ = rosnode_->advertise<gazebo_mecanum_plugins::gazebo_mecanum_plugins_vel>(Wheel_I_vel, 1);
