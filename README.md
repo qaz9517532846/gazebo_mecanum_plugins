@@ -80,7 +80,7 @@ $ catkin_make
 ```
 ------
 
-Using gazebo mecanum plugins PID drive
+### Using gazebo mecanum plugins PID drive
 
 ``` bash
 <gazebo>
