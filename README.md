@@ -108,7 +108,7 @@ $ catkin_make
         <WheelOutputVelTopic>zm_output_vel</WheelOutputVelTopic>
         <WheelPID>gazebo_mecanum_plugins_PID</WheelPID>
       </plugin>
-    </gazebo>
+</gazebo>
 ```
 
 Launch PID Parameter.
