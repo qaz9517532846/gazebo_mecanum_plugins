@@ -125,6 +125,12 @@ $ rosrun rqt_gui rqt_gui
 
 ------
 
+### Reference
+
+[1]. gazebo_ros_pkgs, https://github.com/ros-simulation/gazebo_ros_pkgs
+
+------
+
 This repository is for your reference only. copying, patent application, academic journals are strictly prohibited.
 
 Copyright © 2021 ZM Robotics Software Laboratory.
