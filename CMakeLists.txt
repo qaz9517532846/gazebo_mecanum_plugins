@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8.12)
 project(gazebo_mecanum_plugins)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -58,13 +58,16 @@ link_directories(
 
 add_library(gazebo_ros_mecanum_diff_drive SHARED src/gazebo_ros_mecanum_diff_drive.cpp)
 target_link_libraries(gazebo_ros_mecanum_diff_drive ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(gazebo_ros_mecanum_diff_drive gazebo_mecanum_plugins_messages_cpp)
 
 add_library(gazebo_ros_mecanum_pid_drive SHARED src/gazebo_ros_mecanum_pid_drive.cpp src/gazebo_ros_mecanum_pid.cpp)
 target_link_libraries(gazebo_ros_mecanum_diff_drive ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(gazebo_ros_mecanum_pid_drive gazebo_mecanum_plugins_messages_cpp)
 
 add_executable(gazebo_mecanum_plugin_pid src/gazebo_ros_mecanum_pid_param.cpp)
 target_link_libraries(gazebo_mecanum_plugin_pid ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(gazebo_mecanum_plugin_pid gazebo_mecanum_plugins_gencfg)
+add_dependencies(gazebo_mecanum_plugin_pid gazebo_mecanum_plugins_messages_cpp)
 
 install(TARGETS
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
