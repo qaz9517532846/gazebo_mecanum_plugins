@@ -2,8 +2,6 @@
 #ifndef DIFFDRIVE_PLUGIN_HH
 #define DIFFDRIVE_PLUGIN_HH
 
-#include <map>
-
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 #include <map>
