@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(gazebo_mecanum_plugins)
 
-### set(CMAKE_CXX_STANDARD 11) ros version kinetic, melodic
 set(CMAKE_CXX_STANDARD 17) ros version noetic
 
 find_package(catkin REQUIRED COMPONENTS
