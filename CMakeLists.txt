@@ -1,72 +1,71 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(gazebo_mecanum_plugins)
 
-set(CMAKE_CXX_STANDARD 17) ros version noetic
+# Default to C99
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
 
-find_package(catkin REQUIRED COMPONENTS
-  nav_msgs
-  geometry_msgs
-  joint_state_controller
-  robot_state_publisher
-  roscpp
-  std_msgs
-  tf
-  message_generation
-  dynamic_reconfigure
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(gazebo_dev REQUIRED)
+find_package(gazebo_msgs REQUIRED)
+find_package(gazebo_ros REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+
+link_directories(${gazebo_dev_LIBRARY_DIRS})
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # uncomment the line when a copyright and license is not present in all source files
+  #set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # uncomment the line when this package is not in a git repo
+  #set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+add_library(gazebo_mecanum_diff_drive SHARED
+  src/gazebo_mecanum_diff_drive.cpp)
+
+target_include_directories(gazebo_mecanum_diff_drive PUBLIC include)
+ament_target_dependencies(gazebo_mecanum_diff_drive
+  "gazebo_dev"
+  "gazebo_ros"
+  "geometry_msgs"
+  "nav_msgs"
+  "rclcpp"
+  "tf2"
+  "tf2_geometry_msgs"
+  "tf2_ros"
 )
 
-find_package(gazebo)
+ament_package()
 
-add_message_files(
-  FILES
-  gazebo_mecanum_plugins_vel.msg
-  gazebo_mecanum_plugins_pid.msg
-)
-
-generate_dynamic_reconfigure_options(
-  cfg/gazebo_ros_mecanum_pid.cfg
-)
-
-generate_messages(
-   DEPENDENCIES
-   std_msgs
-)
-
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES gazebo_mecanum_plugins
-  CATKIN_DEPENDS
-    nav_msgs
-    geometry_msgs
-    joint_state_controller
-    robot_state_publisher
-    roscpp
-    std_msgs
-    tf
-)
-
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-  ${GAZEBO_INCLUDE_DIRS}
-)
-
-link_directories(
-  ${catkin_LIBRARY_DIRS}
-  ${GAZEBO_LIBRARY_DIRS}
-)
-
-add_library(gazebo_ros_mecanum_diff_drive SHARED src/gazebo_ros_mecanum_diff_drive.cpp)
-target_link_libraries(gazebo_ros_mecanum_diff_drive ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-
-add_library(gazebo_ros_mecanum_pid_drive SHARED src/gazebo_ros_mecanum_pid_drive.cpp src/gazebo_ros_mecanum_pid.cpp)
-target_link_libraries(gazebo_ros_mecanum_diff_drive ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-
-add_executable(gazebo_mecanum_plugin_pid src/gazebo_ros_mecanum_pid_param.cpp)
-target_link_libraries(gazebo_mecanum_plugin_pid ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(gazebo_mecanum_plugin_pid gazebo_mecanum_plugins_gencfg)
+install(DIRECTORY include/
+        DESTINATION include)
 
 install(TARGETS
-   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        gazebo_mecanum_diff_drive
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+
+install(DIRECTORY
+  DESTINATION share/${PROJECT_NAME}/
 )

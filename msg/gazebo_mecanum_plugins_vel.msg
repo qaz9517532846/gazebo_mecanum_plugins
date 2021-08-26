@@ -1,4 +1,0 @@
-float64 LEFT_REAR_vel
-float64 LEFT_FRONT_vel
-float64 RIGHT_FRONT_vel
-float64 RIGHT_REAR_vel
