@@ -34,7 +34,7 @@ Gazebo Plugin for the mobile robot using four mecanum wheel.
    
     ``` $ sudo apt-get install -y gazebo7 ```
     
-- Step2. Install gazebo_mecanum_plugins package.
+- Step3. Install gazebo_mecanum_plugins package.
 
 ``` bash
 $ cd <catkin_workspace>/src
@@ -42,6 +42,16 @@ $ cd <catkin_workspace>/src
 
 ``` bash
 $ git clone https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
+```
+
+- Step3. Setting gazebo_ros_mecanum_pid.cfg is a active file.
+
+``` bash
+$ cd <catkin_ws>/gazebo_mecanum_plugins/cfg
+```
+
+``` bash
+$ chmod a+x gazebo_ros_mecanum_pid.cfg
 ```
 
 ``` bash
@@ -52,7 +62,7 @@ $ cd ..
 $ catkin_make
 ```
 
-- Step3. How to using a gazebo_mecanum_plugins into xacro file.
+- Step4. How to using a gazebo_mecanum_plugins into xacro file.
 
 ``` bash
 <gazebo>
