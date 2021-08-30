@@ -6,7 +6,7 @@ Gazebo Plugin for the mobile robot using four mecanum wheel.
 
 - Version: kinetic, melodic, Noetic.
 
--  Step2. Install package.
+-  Step1. Install package.
 
 - Your PC need to install ros package.
 
@@ -16,7 +16,7 @@ Gazebo Plugin for the mobile robot using four mecanum wheel.
    
   ``` $ sudo apt-get install -y gazebo7 ```
     
-- Step3. Install gazebo_mecanum_plugins package.
+- Step2. Install gazebo_mecanum_plugins package.
 
 ``` bash
 $ cd <catkin_workspace>/src
