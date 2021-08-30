@@ -44,7 +44,7 @@ $ cd <catkin_workspace>/src
 $ git clone https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
 ```
 
-- Step3. Setting gazebo_ros_mecanum_pid.cfg is a active file.
+- Step3. Setting gazebo_ros_mecanum_pid.cfg is a (active file)[https://github.com/qaz9517532846/gazebo_mecanum_plugins/issues/1].
 
 ``` bash
 $ cd <catkin_ws>/gazebo_mecanum_plugins/cfg
