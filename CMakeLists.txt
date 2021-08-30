@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(gazebo_mecanum_plugins)
 
-set(CMAKE_CXX_STANDARD 17) ros version noetic
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(catkin REQUIRED COMPONENTS
   nav_msgs
