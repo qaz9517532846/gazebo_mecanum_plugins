@@ -10,29 +10,11 @@ Gazebo Plugin for the mobile robot using four mecanum wheel.
 
 - Your PC need to install ros package.
 
-  - if your pc used noetic version.
-
-    ``` $ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control ros-noetic-ros-controllers ```
-
-    ``` $ sudo apt-get install -y libgazebo11-dev ```
-    
-    ``` $ sudo apt-get install -y gazebo11 ```
-
-  - if your pc used melodic version.
-
-    ``` $ sudo apt-get install ros-melodic-gazebo-ros-pkgs ros-melodic-gazebo-ros-control ros-melodic-ros-controllers ```
-
-    ``` $ sudo apt-get install -y libgazebo9-dev ```
-    
-    ``` $ sudo apt-get install -y gazebo9 ```
-
-  - if your pc used kinetic version.
-
-    ``` $ sudo apt-get install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-control ros-kinetic-ros-controllers ```
+  ``` $ sudo apt-get install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-control ros-kinetic-ros-controllers ```
    
-    ``` $ sudo apt-get install -y libgazebo7-dev ```
+  ``` $ sudo apt-get install -y libgazebo7-dev ```
    
-    ``` $ sudo apt-get install -y gazebo7 ```
+  ``` $ sudo apt-get install -y gazebo7 ```
     
 - Step3. Install gazebo_mecanum_plugins package.
 
