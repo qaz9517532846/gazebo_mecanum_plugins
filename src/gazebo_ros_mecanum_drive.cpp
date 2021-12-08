@@ -17,14 +17,13 @@ namespace gazebo
     
     GazeboRosMecanumDrive::~GazeboRosMecanumDrive()
     {
-
+        FiniChild();
     }
     
     // Load the controller
     void GazeboRosMecanumDrive::Load(physics::ModelPtr parent, sdf::ElementPtr sdf)
     {
         parent_ = parent;
-        pid_controller_ = pid_controllerPtr(new pid_controller(parent_));
         /* Parse parameters */
         
         robot_namespace_ = "";
@@ -170,6 +169,18 @@ namespace gazebo
             publishWheelJointState_ = sdf->GetElement("publishWheelJointState")->Get<bool>();
         }
 
+        wheel_torque = 50.0;
+        if(!sdf->HasElement("WheelTorque"))
+        {
+            ROS_WARN_NAMED("MecanumDiffDrive", "MecanumDiffDrivePlugin (ns = %s) missing <WheelTorque>, "
+                           "defaults to %f",
+                            robot_namespace_.c_str(), wheel_torque);
+        }
+        else
+        {
+            wheel_torque = sdf->GetElement("WheelTorque")->Get<double>();
+        }
+
         wheel_separation_w = 0.5;
         if(!sdf->HasElement("WheelSeparationW"))
         {
@@ -242,59 +253,16 @@ namespace gazebo
             isRollerModel_ = sdf->GetElement("isRollerModel")->Get<bool>();
         }
 
-        dt_ = 0.05;
-        if(!sdf->HasElement("dt"))
-        {
-            ROS_WARN_NAMED("MecanumDiffDrive", "MecanumDiffDrivePlugin (ns = %s) missing <dt>, "
-                           "defaults to %f",
-                            robot_namespace_.c_str(), dt_);
-        }
-        else
-        {
-            dt_ = sdf->GetElement("dt")->Get<double>();
-        }
-
-        Wheel_I_vel = "Wheel_input_vel";
-        if(!sdf->HasElement("WheelInputVelTopic"))
-        {
-            ROS_WARN_NAMED("MecanumDiffDrive", "MecanumDiffDrivePlugin (ns = %s) missing <WheelInputVelTopic>, "
-                           "defaults to %s",
-                            robot_namespace_.c_str(), Wheel_I_vel.c_str());
-        }
-        else
-        {
-            Wheel_I_vel = sdf->GetElement("WheelInputVelTopic")->Get<std::string>();
-        }
-
-        Wheel_O_vel = "Wheel_Output_vel";
-        if(!sdf->HasElement("WheelOutputVelTopic"))
-        {
-            ROS_WARN_NAMED("MecanumDiffDrive", "MecanumDiffDrivePlugin (ns = %s) missing <WheelOutputVelTopic>, "
-                           "defaults to %s",
-                            robot_namespace_.c_str(), Wheel_O_vel.c_str());
-        }
-        else
-        {
-            Wheel_O_vel = sdf->GetElement("WheelOutputVelTopic")->Get<std::string>();
-        }
-
-        wheel_pid = "wheel_pid";
-        if(!sdf->HasElement("WheelPID"))
-        {
-            ROS_WARN_NAMED("MecanumDiffDrive", "MecanumDiffDrivePlugin (ns = %s) missing <WheelPID>, "
-                           "defaults to %s",
-                            robot_namespace_.c_str(), wheel_pid.c_str());
-        }
-        else
-        {
-            wheel_pid = sdf->GetElement("WheelPID")->Get<std::string>();
-        }
-        
         joints_.resize(4);
         joints_[LEFT_REAR] = parent_->GetJoint(left_rear_);
         joints_[LEFT_FRONT] = parent_->GetJoint(left_front_);
         joints_[RIGHT_FRONT] = parent_->GetJoint(right_front_);
         joints_[RIGHT_REAR] = parent_->GetJoint(right_rear_);
+
+        joints_[LEFT_REAR]->SetParam("fmax", 0, wheel_torque);
+        joints_[LEFT_FRONT]->SetParam("fmax", 0, wheel_torque);
+        joints_[RIGHT_FRONT]->SetParam("fmax", 0, wheel_torque);
+        joints_[RIGHT_REAR]->SetParam("fmax", 0, wheel_torque);
 
     #if GAZEBO_MAJOR_VERSION >= 8
         last_odom_publish_time_ = parent_->GetWorld()->SimTime();
@@ -343,16 +311,8 @@ namespace gazebo
                                                                                        boost::bind(&GazeboRosMecanumDrive::cmdVelCallback, this, _1),
                                                                                        ros::VoidPtr(), &queue_);
 
-        ros::SubscribeOptions so_pid = ros::SubscribeOptions::create<gazebo_mecanum_plugins::gazebo_mecanum_plugins_pid>(wheel_pid, 1,
-                                                                                                                         boost::bind(&GazeboRosMecanumDrive::wheelPIDCallback, this, _1),
-                                                                                                                         ros::VoidPtr(), &queue_);
-
         vel_sub_ = rosnode_->subscribe(so);
-        wheel_pid_sub_ = rosnode_->subscribe(so_pid);
-
         odometry_pub_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 1);
-        Wheel_I_vel_pub_ = rosnode_->advertise<gazebo_mecanum_plugins::gazebo_mecanum_plugins_vel>(Wheel_I_vel, 1);
-        Wheel_O_vel_pub_ = rosnode_->advertise<gazebo_mecanum_plugins::gazebo_mecanum_plugins_vel>(Wheel_O_vel, 1);
 
         if (this->publishWheelJointState_)
         {
@@ -413,6 +373,13 @@ namespace gazebo
     void GazeboRosMecanumDrive::UpdateChild()
     {
         boost::mutex::scoped_lock scoped_lock(lock);
+        for(int i = 0; i < 4; i++)
+        {
+            if(fabs(wheel_torque - joints_[i]->GetParam("fmax", 0)) > 1e-6)
+            {
+                joints_[i]->SetParam ("fmax", 0, wheel_torque);
+            }
+        }
 
     #if GAZEBO_MAJOR_VERSION >= 8
         ignition::math::Pose3d pose = parent_->WorldPose();
@@ -444,27 +411,17 @@ namespace gazebo
                 current_speed[RIGHT_FRONT] = joints_[RIGHT_FRONT]->GetVelocity(0);
                 current_speed[RIGHT_REAR] = joints_[RIGHT_REAR]->GetVelocity(0);
 
-                wheel_output_.LEFT_REAR_vel = current_speed[LEFT_REAR];
-                wheel_output_.LEFT_FRONT_vel = current_speed[LEFT_FRONT];
-                wheel_output_.RIGHT_FRONT_vel = current_speed[RIGHT_FRONT];
-                wheel_output_.RIGHT_REAR_vel = current_speed[RIGHT_REAR];
-
                 if(wheel_accel_ == 0 ||
-                  (fabs(wheel_speed_[LEFT_REAR] - current_speed[LEFT_REAR]) < 0.01) ||
-                  (fabs(wheel_speed_[LEFT_FRONT] - current_speed[LEFT_FRONT]) < 0.01) ||
-                  (fabs(wheel_speed_[RIGHT_FRONT] - current_speed[RIGHT_FRONT]) < 0.01) ||
-                  (fabs(wheel_speed_[RIGHT_REAR] - current_speed[RIGHT_REAR]) < 0.01))
+                  (fabs(wheel_speed_[LEFT_REAR] - current_speed[LEFT_REAR] ) < 0.01) ||
+                  (fabs(wheel_speed_[LEFT_FRONT] - current_speed[LEFT_FRONT] ) < 0.01) ||
+                  (fabs(wheel_speed_[RIGHT_FRONT] - current_speed[RIGHT_FRONT] ) < 0.01) ||
+                  (fabs(wheel_speed_[RIGHT_REAR] - current_speed[RIGHT_REAR] ) < 0.01))
                   {
                       //if max_accel == 0, or target speed is reached
-                      pid_controller_->gazebo_PID_LEFT_REAR_(joints_[LEFT_REAR], wheel_speed_[LEFT_REAR]);
-                      pid_controller_->gazebo_PID_LEFT_FRONT_(joints_[LEFT_FRONT], wheel_speed_[LEFT_FRONT]);
-                      pid_controller_->gazebo_PID_RIGHT_FRONT_(joints_[RIGHT_FRONT], wheel_speed_[RIGHT_FRONT]);
-                      pid_controller_->gazebo_PID_RIGHT_REAR_(joints_[RIGHT_REAR], wheel_speed_[RIGHT_REAR]);
-
-                      wheel_input_.LEFT_REAR_vel = wheel_speed_[LEFT_REAR];
-                      wheel_input_.LEFT_FRONT_vel = wheel_speed_[LEFT_FRONT];
-                      wheel_input_.RIGHT_FRONT_vel = wheel_speed_[RIGHT_FRONT];
-                      wheel_input_.RIGHT_REAR_vel = wheel_speed_[RIGHT_REAR];
+                      joints_[LEFT_REAR]->SetParam("vel", 0, wheel_speed_[LEFT_REAR]);
+                      joints_[LEFT_FRONT]->SetParam("vel", 0, wheel_speed_[LEFT_FRONT]);
+                      joints_[RIGHT_FRONT]->SetParam("vel", 0, wheel_speed_[RIGHT_FRONT]);
+                      joints_[RIGHT_REAR]->SetParam("vel", 0, wheel_speed_[RIGHT_REAR]);
                   }
                   else
                   {
@@ -488,15 +445,10 @@ namespace gazebo
                     else
                         wheel_speed_instr_[RIGHT_REAR] += fmax(wheel_speed_[RIGHT_REAR] - current_speed[RIGHT_REAR], -wheel_accel_ * seconds_since_last_update);
 
-                    pid_controller_->gazebo_PID_LEFT_REAR_(joints_[LEFT_REAR], wheel_speed_instr_[LEFT_REAR]);
-                    pid_controller_->gazebo_PID_LEFT_FRONT_(joints_[LEFT_FRONT], wheel_speed_instr_[LEFT_FRONT]);
-                    pid_controller_->gazebo_PID_RIGHT_FRONT_(joints_[RIGHT_FRONT], wheel_speed_instr_[RIGHT_FRONT]);
-                    pid_controller_->gazebo_PID_RIGHT_REAR_(joints_[RIGHT_REAR], wheel_speed_instr_[RIGHT_REAR]);
-
-                    wheel_input_.LEFT_REAR_vel = wheel_speed_instr_[LEFT_REAR];
-                    wheel_input_.LEFT_FRONT_vel = wheel_speed_instr_[LEFT_FRONT];
-                    wheel_input_.RIGHT_FRONT_vel = wheel_speed_instr_[RIGHT_FRONT];
-                    wheel_input_.RIGHT_REAR_vel = wheel_speed_instr_[RIGHT_REAR];
+                    joints_[LEFT_REAR]->SetParam("vel", 0, wheel_speed_instr_[LEFT_REAR]);
+                    joints_[LEFT_FRONT]->SetParam("vel", 0, wheel_speed_instr_[LEFT_FRONT]);
+                    joints_[RIGHT_FRONT]->SetParam("vel", 0, wheel_speed_instr_[RIGHT_FRONT]);
+                    joints_[RIGHT_REAR]->SetParam("vel", 0, wheel_speed_instr_[RIGHT_REAR]);
                 }
 
                 if(!isRollerModel_)
@@ -512,8 +464,6 @@ namespace gazebo
                     publishOdometry(seconds_since_last_update);
                 }
 
-                Wheel_I_vel_pub_.publish(wheel_input_);
-                Wheel_O_vel_pub_.publish(wheel_output_);
                 last_odom_publish_time_ = current_time;
             }
         }
@@ -547,7 +497,7 @@ namespace gazebo
     
     void GazeboRosMecanumDrive::QueueThread()
     {
-        static const double timeout = dt_;
+        static const double timeout = 0.01;
         while (alive_ && rosnode_->ok())
         {
             queue_.callAvailable(ros::WallDuration(timeout));
@@ -629,25 +579,9 @@ namespace gazebo
 
         double l = 1.0 / (2 * (wheel_separation_w + wheel_separation_l));
 
-        cal_LineVel_.vel_x = (wheel_encoder[LEFT_REAR] + wheel_encoder[LEFT_FRONT] + wheel_encoder[RIGHT_FRONT] + wheel_encoder[RIGHT_REAR]) * wheel_diameter_ / 2;
-        cal_LineVel_.vel_y = (wheel_encoder[LEFT_REAR] - wheel_encoder[LEFT_FRONT] + wheel_encoder[RIGHT_FRONT] - wheel_encoder[RIGHT_REAR]) * wheel_diameter_ / 2;
-        cal_LineVel_.vel_th = (-wheel_encoder[LEFT_REAR] - wheel_encoder[LEFT_FRONT] + wheel_encoder[RIGHT_FRONT] + wheel_encoder[RIGHT_REAR]) * l * wheel_diameter_ / 2;
-    }
-
-    void GazeboRosMecanumDrive::wheelPIDCallback(const gazebo_mecanum_plugins::gazebo_mecanum_plugins_pid::ConstPtr& msg)
-    {
-        pid_controller_->LEFT_REAR_.P = msg->LR_P;
-        pid_controller_->LEFT_REAR_.I = msg->LR_I;
-        pid_controller_->LEFT_REAR_.D = msg->LR_D;
-        pid_controller_->LEFT_FRONT_.P = msg->LF_P;
-        pid_controller_->LEFT_FRONT_.I = msg->LF_I;
-        pid_controller_->LEFT_FRONT_.D = msg->LF_D;
-        pid_controller_->RIGHT_FRONT_.P = msg->RF_P;
-        pid_controller_->RIGHT_FRONT_.I = msg->RF_I;
-        pid_controller_->RIGHT_FRONT_.D = msg->RF_D;
-        pid_controller_->RIGHT_REAR_.P = msg->RR_P;
-        pid_controller_->RIGHT_REAR_.I = msg->RR_I;
-        pid_controller_->RIGHT_REAR_.D = msg->RR_D;
+        line_vel.vel_x = (wheel_encoder[LEFT_REAR] + wheel_encoder[LEFT_FRONT] + wheel_encoder[RIGHT_FRONT] + wheel_encoder[RIGHT_REAR]) * wheel_diameter_ / 2;
+        line_vel.vel_y = (wheel_encoder[LEFT_REAR] - wheel_encoder[LEFT_FRONT] + wheel_encoder[RIGHT_FRONT] - wheel_encoder[RIGHT_REAR]) * wheel_diameter_ / 2;
+        line_vel.vel_th = (-wheel_encoder[LEFT_REAR] - wheel_encoder[LEFT_FRONT] + wheel_encoder[RIGHT_FRONT] + wheel_encoder[RIGHT_REAR]) * l * wheel_diameter_ / 2;
     }
     
     GZ_REGISTER_MODEL_PLUGIN(GazeboRosMecanumDrive)

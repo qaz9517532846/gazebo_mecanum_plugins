@@ -10,11 +10,29 @@ Gazebo Plugin for the mobile robot using four mecanum wheel.
 
 - Your PC need to install ros package.
 
-  ``` $ sudo apt-get install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-control ros-kinetic-ros-controllers ```
+  - if your pc used noetic version.
+
+    ``` $ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control ros-noetic-ros-controllers ```
+
+    ``` $ sudo apt-get install -y libgazebo11-dev ```
+    
+    ``` $ sudo apt-get install -y gazebo11 ```
+
+  - if your pc used melodic version.
+
+    ``` $ sudo apt-get install ros-melodic-gazebo-ros-pkgs ros-melodic-gazebo-ros-control ros-melodic-ros-controllers ```
+
+    ``` $ sudo apt-get install -y libgazebo9-dev ```
+    
+    ``` $ sudo apt-get install -y gazebo9 ```
+
+  - if your pc used kinetic version.
+
+    ``` $ sudo apt-get install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-control ros-kinetic-ros-controllers ```
    
-  ``` $ sudo apt-get install -y libgazebo7-dev ```
+    ``` $ sudo apt-get install -y libgazebo7-dev ```
    
-  ``` $ sudo apt-get install -y gazebo7 ```
+    ``` $ sudo apt-get install -y gazebo7 ```
     
 - Step2. Install gazebo_mecanum_plugins package.
 
@@ -26,16 +44,6 @@ $ cd <catkin_workspace>/src
 $ git clone https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
 ```
 
-- Step3. Setting gazebo_ros_mecanum_pid.cfg is a [active file](https://github.com/qaz9517532846/gazebo_mecanum_plugins/issues/1).
-
-``` bash
-$ cd <catkin_ws>/gazebo_mecanum_plugins/cfg
-```
-
-``` bash
-$ chmod a+x gazebo_ros_mecanum_pid.cfg
-```
-
 ``` bash
 $ cd ..
 ```
@@ -44,11 +52,11 @@ $ cd ..
 $ catkin_make
 ```
 
-- Step4. How to using a gazebo_mecanum_plugins into xacro file.
+- Step3. How to using a gazebo_mecanum_plugins into xacro file.
 
 ``` bash
 <gazebo>
-      <plugin name="gazebo_ros_mecanum_diff_drive" filename="libgazebo_ros_mecanum_diff_drive.so">
+      <plugin name="gazebo_ros_mecanum_diff_drive" filename="libgazebo_ros_mecanum_drive.so">
         <commandTopic>cmd_vel</commandTopic>
         <odometryTopic>odom</odometryTopic>
         <odometryFrame>odom</odometryFrame>
