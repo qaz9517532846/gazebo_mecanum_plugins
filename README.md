@@ -10,7 +10,7 @@ Gazebo Plugin for the mobile robot using four mecanum wheel.
 
 - Your PC need to install ros package.
 
-  ``` $ sudo apt-get install ros-foxy-gazebo-ros-pkgs ros-foxy-gazebo-ros-control ros-foxy-ros-controllers ```
+  ``` $ sudo apt-get install ros-foxy-gazebo-ros-pkgs ```
 
   ``` $ sudo apt-get install -y libgazebo11-dev ```
     
