@@ -43,8 +43,24 @@ endif()
 add_library(gazebo_mecanum_drive SHARED
   src/gazebo_mecanum_drive.cpp)
 
+add_library(gazebo_mecanum_pid_drive SHARED
+  src/gazebo_mecanum_pid_drive.cpp)
+
 target_include_directories(gazebo_mecanum_drive PUBLIC include)
+target_include_directories(gazebo_mecanum_pid_drive PUBLIC include)
+
 ament_target_dependencies(gazebo_mecanum_drive
+  "gazebo_dev"
+  "gazebo_ros"
+  "geometry_msgs"
+  "nav_msgs"
+  "rclcpp"
+  "tf2"
+  "tf2_geometry_msgs"
+  "tf2_ros"
+)
+
+ament_target_dependencies(gazebo_mecanum_pid_drive
   "gazebo_dev"
   "gazebo_ros"
   "geometry_msgs"
@@ -62,6 +78,7 @@ install(DIRECTORY include/
 
 install(TARGETS
         gazebo_mecanum_drive
+        gazebo_mecanum_pid_drive
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)

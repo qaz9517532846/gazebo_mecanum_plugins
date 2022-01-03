@@ -2,10 +2,12 @@
 #define GAZEBO_MECANUM_PLUGINS_DIFF_DRIVE_PRIVATE_H_
 
 #include <gazebo/common/Time.hh>
+#include <gazebo/common/common.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/World.hh>
+#include <gazebo/physics/JointController.hh>
 #include <gazebo_ros/conversions/builtin_interfaces.hpp>
 #include <gazebo_ros/conversions/geometry_msgs.hpp>
 #include <gazebo_ros/node.hpp>
@@ -176,8 +178,18 @@ namespace gazebo_mecanum_plugins
 
     linear_vel cal_LineVel_;
 
+    struct pid_parameter
+    {
+      double p_gain;
+      double i_gain;
+      double d_gain;
+    };
+
+    pid_parameter pid_lr, pid_lf, pid_rf, pid_rr;
+
     /// Calcalate mecanum wheel kinematics
     void calkinematics(linear_vel &line_vel);
+    void gazebo_PID_WHEEL_(gazebo::physics::JointPtr joint, pid_parameter &pid, double vel);
   };
 }  // namespace gazebo_plugins
 

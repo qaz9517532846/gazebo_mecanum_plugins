@@ -10,7 +10,7 @@ Gazebo Plugin for the mobile robot using four mecanum wheel.
 
 - Your PC need to install ros package.
 
-  ``` $ sudo apt-get install ros-foxy-gazebo-ros-pkgs ```
+  ``` $ sudo apt-get install ros-foxy-gazebo-ros-pkgs ros-foxy-gazebo-ros-control ros-foxy-ros-controllers ```
 
   ``` $ sudo apt-get install -y libgazebo11-dev ```
     
@@ -39,7 +39,7 @@ $ catkin_make
 
 ``` bash
 <gazebo>
-      <plugin name="gazebo_ros_mecanum_diff_drive" filename="libgazebo_ros_mecanum_drive.so">
+      <plugin name="gazebo_ros_mecanum_diff_drive" filename="libgazebo_ros_mecanum_diff_drive.so">
         <commandTopic>cmd_vel</commandTopic>
         <odometryTopic>odom</odometryTopic>
         <odometryFrame>odom</odometryFrame>
