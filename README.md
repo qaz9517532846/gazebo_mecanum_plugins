@@ -62,6 +62,10 @@ $ catkin_make
 </gazebo>
 ```
 
+------
+
+### Using gazebo mecanum plugins PID drive
+
 ``` bash
 <gazebo>
     <plugin name="zm_robot_diff_drive" filename="libgazebo_mecanum_pid_drive.so">
