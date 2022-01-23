@@ -14,19 +14,11 @@ gazebo_mecanum_plugins is Gazebo plugins for mecanum driving.
 
 ### Installation
 
-    ``` bash 
-    $ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control ros-noetic-ros-controllers 
-    ```
+    ``` $ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control ros-noetic-ros-controllers```
     
-
-    ``` bash 
-    $ sudo apt-get install -y libgazebo11-dev 
-    ```
+    ``` $ sudo apt-get install -y libgazebo11-dev```
     
-    
-    ``` bash 
-    $ sudo apt-get install -y gazebo11 
-    ```
+    ``` $ sudo apt-get install -y gazebo11```
     
 ### How to using a gazebo_mecanum_plugins into xacro file.
 
