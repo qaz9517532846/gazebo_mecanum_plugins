@@ -1,58 +1,26 @@
 # gazebo_mecanum_plugins
 
-Gazebo Plugin for the mobile robot using four mecanum wheel. 
+gazebo_mecanum_plugins is Gazebo plugins for mecanum driving.
 
-- Software: Robot Operating System.
+------
 
-- Version: kinetic, melodic, Noetic.
+## Built with
 
--  Step1. Install package.
+- ROS Kinetic under Ubuntu 16.04 LTS
 
-- Your PC need to install ros package.
+------
 
-  - if your pc used noetic version.
+## Getting Started
 
-    ``` $ sudo apt-get install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control ros-noetic-ros-controllers ```
+### Installation
 
-    ``` $ sudo apt-get install -y libgazebo11-dev ```
+``` $ sudo apt-get install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-control ros-kinetic-ros-controllers```
     
-    ``` $ sudo apt-get install -y gazebo11 ```
-
-  - if your pc used melodic version.
-
-    ``` $ sudo apt-get install ros-melodic-gazebo-ros-pkgs ros-melodic-gazebo-ros-control ros-melodic-ros-controllers ```
-
-    ``` $ sudo apt-get install -y libgazebo9-dev ```
+``` $ sudo apt-get install -y libgazebo7-dev```
     
-    ``` $ sudo apt-get install -y gazebo9 ```
-
-  - if your pc used kinetic version.
-
-    ``` $ sudo apt-get install ros-kinetic-gazebo-ros-pkgs ros-kinetic-gazebo-ros-control ros-kinetic-ros-controllers ```
-   
-    ``` $ sudo apt-get install -y libgazebo7-dev ```
-   
-    ``` $ sudo apt-get install -y gazebo7 ```
+``` $ sudo apt-get install -y gazebo7```
     
-- Step2. Install gazebo_mecanum_plugins package.
-
-``` bash
-$ cd <catkin_workspace>/src
-```
-
-``` bash
-$ git clone https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
-```
-
-``` bash
-$ cd ..
-```
-
-``` bash
-$ catkin_make
-```
-
-- Step3. How to using a gazebo_mecanum_plugins into xacro file.
+### How to using a gazebo_mecanum_plugins into xacro file.
 
 ``` bash
 <gazebo>
