@@ -1,41 +1,26 @@
 # gazebo_mecanum_plugins
 
-Gazebo Plugin for the mobile robot using four mecanum wheel. 
+gazebo_mecanum_plugins is Gazebo plugins for mecanum driving.
 
-- Software: Robot Operating System 2.
+------
 
-- Version: foxy.
+## Built with
 
--  Step1. Install package.
+- ROS Foxy under Ubuntu 20.04 LTS
 
-- Your PC need to install ros package.
+------
 
-  ``` $ sudo apt-get install ros-foxy-gazebo-ros-pkgs ros-foxy-gazebo-ros-control ros-foxy-ros-controllers ```
+## Getting Started
 
-  ``` $ sudo apt-get install -y libgazebo11-dev ```
+### Installation
+
+``` $ sudo apt-get install ros-foxy-gazebo-ros-pkgs ros-foxy-gazebo-ros-control ros-foxy-ros-controllers```
     
-  ``` $ sudo apt-get install -y gazebo11 ```
-
+``` $ sudo apt-get install -y libgazebo11-dev```
     
-- Step2. Install gazebo_mecanum_plugins package.
-
-``` bash
-$ cd <catkin_workspace>/src
-```
-
-``` bash
-$ git clone https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
-```
-
-``` bash
-$ cd ..
-```
-
-``` bash
-$ catkin_make
-```
-
-- Step3. How to using a gazebo_mecanum_plugins into xacro file.
+``` $ sudo apt-get install -y gazebo11```
+    
+### How to using a gazebo_mecanum_plugins into xacro file.
 
 ``` bash
 <gazebo>
